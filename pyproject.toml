@@ -13,6 +13,8 @@ openai = "^1.6.1"
 weaviate-client = "^3.26.0"
 python-dotenv = "^1.0.0"
 tiktoken = "^0.5.2"
+faiss-cpu = "^1.7.4"
+chromadb = "^0.4.22"
 
 
 [tool.poetry.group.dev.dependencies]
