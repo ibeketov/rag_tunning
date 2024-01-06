@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "rag-tunning"
+version = "0.1.0"
+description = ""
+authors = ["None"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.1.0"
+openai = "^1.6.1"
+weaviate-client = "^3.26.0"
+python-dotenv = "^1.0.0"
+tiktoken = "^0.5.2"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.28.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
