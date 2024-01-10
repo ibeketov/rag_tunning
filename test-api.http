@@ -1,0 +1,2 @@
+GET https://bitwarden.morosus.synology.me/status HTTP/1.1
+content-type: application/json
