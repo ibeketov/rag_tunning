@@ -17,6 +17,7 @@ faiss-cpu = "^1.7.4"
 chromadb = "^0.4.22"
 pandas = "^2.1.4"
 matplotlib = "^3.8.2"
+bs4 = "^0.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
