@@ -6,19 +6,20 @@ import json
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from termcolor import colored  
 
+GPT_MODEL = "gpt-3.5-turbo-0613"
+
 # Initiation of the connection to the database and OpenAI
 _ = load_dotenv(find_dotenv()) # read local .env file
 
-GPT_MODEL = "gpt-3.5-turbo-0613"
 client = OpenAI()
 client.api_key  = os.environ['OPENAI_API_KEY']
 
+#coneect to the database
 try: 
     conn = sqlite3.connect("data/Chinook.db")
 except:
     print("Failed to connect to the database.")
     conn = None
-
 
 @retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
 def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MODEL):
@@ -102,64 +103,82 @@ def execute_function_call(message):
         results = f"Error: function {message.tool_calls[0].function.name} does not exist"
     return results
 
+def main():    
+    database_schema_dict = get_database_info(conn)
 
-database_schema_dict = get_database_info(conn)
+    database_schema_string = "\n".join(
+        [
+            f"Table: {table['table_name']}\nColumns: {', '.join(table['column_names'])}"
+            for table in database_schema_dict
+        ]
+    )
 
-database_schema_string = "\n".join(
-    [
-        f"Table: {table['table_name']}\nColumns: {', '.join(table['column_names'])}"
-        for table in database_schema_dict
-    ]
-)
-
-# if __name__ == "__main__":
-#     # Define the tool to be used in the chat completion
-#     main()
-# Define the tool to be used in the chat completion
-tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "ask_database",
-            "description": "Use this function to answer user questions about music. Input should be a fully formed SQL query.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": f"""
-                                SQL query extracting info to answer the user's question.
-                                SQL should be written using this database schema:
-                                {database_schema_string}
-                                The query should be returned in plain text, not in JSON.
-                                """,
-                    }
+    # Define the tool to be used in the chat completion
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "ask_database",
+                "description": "Use this function to answer user questions about music. Input should be a fully formed SQL query.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": f"""
+                                    SQL query extracting info to answer the user's question.
+                                    SQL should be written using this database schema:
+                                    {database_schema_string}
+                                    The query should be returned in plain text, not in JSON.
+                                    """,
+                        }
+                    },
+                    "required": ["query"],
                 },
-                "required": ["query"],
-            },
+            }
         }
-    }
-]
+    ]
 
-# Example conversation
-messages = []
-messages.append({"role": "system", "content": "Answer user questions by generating SQL queries against the Chinook Music Database."})
-messages.append({"role": "user", "content": "Hi, who are the top 5 artists by number of tracks?"})
-chat_response = chat_completion_request(messages, tools)
-assistant_message = chat_response.choices[0].message
-assistant_message.content = str(assistant_message.tool_calls[0].function)
-messages.append({"role": assistant_message.role, "content": assistant_message.content})
-if assistant_message.tool_calls:
-    results = execute_function_call(assistant_message)
-    messages.append({"role": "function", "tool_call_id": assistant_message.tool_calls[0].id, "name": assistant_message.tool_calls[0].function.name, "content": results})
-pretty_print_conversation(messages)
+    # Example conversation
+    messages = []
+    messages.append({"role": "system", "content": "Answer user questions by generating SQL queries against the Chinook Music Database."})
+    # messages.append({"role": "user", "content": "Hi, who are the top 5 artists by number of tracks?"})
+    # chat_response = chat_completion_request(messages, tools)
+    # assistant_message = chat_response.choices[0].message
+    # print(assistant_message)
+    # assistant_message.content = str(assistant_message.tool_calls[0].function)
+    # messages.append({"role": assistant_message.role, "content": assistant_message.content})
+    # if assistant_message.tool_calls:
+    #     results = execute_function_call(assistant_message)
+    #     messages.append({"role": "function", "tool_call_id": assistant_message.tool_calls[0].id, "name": assistant_message.tool_calls[0].function.name, "content": results})
+    # pretty_print_conversation(messages)
 
-messages.append({"role": "user", "content": "What is the name of the album with the most tracks?"})
-chat_response = chat_completion_request(messages, tools)
-assistant_message = chat_response.choices[0].message
-assistant_message.content = str(assistant_message.tool_calls[0].function)
-messages.append({"role": assistant_message.role, "content": assistant_message.content})
-if assistant_message.tool_calls:
-    results = execute_function_call(assistant_message)
-    messages.append({"role": "function", "tool_call_id": assistant_message.tool_calls[0].id, "name": assistant_message.tool_calls[0].function.name, "content": results})
-pretty_print_conversation(messages)
+    # messages.append({"role": "user", "content": "What is the name of the album with the most tracks?"})
+    # chat_response = chat_completion_request(messages, tools)
+    # assistant_message = chat_response.choices[0].message
+    # assistant_message.content = str(assistant_message.tool_calls[0].function)
+    # messages.append({"role": assistant_message.role, "content": assistant_message.content})
+    # if assistant_message.tool_calls:
+    #     results = execute_function_call(assistant_message)
+    #     messages.append({"role": "function", "tool_call_id": assistant_message.tool_calls[0].id, "name": assistant_message.tool_calls[0].function.name, "content": results})
+    # pretty_print_conversation(messages)
+
+    print('Write your message to the bot and press ENTER:')
+    # while True:
+    user_input = input('You: ')
+    messages.append({"role": "user", "content": user_input})
+    chat_response = chat_completion_request(messages, tools)
+    assistant_message = chat_response.choices[0].message
+    assistant_message.content = str(assistant_message.tool_calls[0].function)
+    messages.append({"role": assistant_message.role, "content": assistant_message.content})
+    if assistant_message.tool_calls:
+        results = execute_function_call(assistant_message)
+        messages.append({"role": "function", "tool_call_id": assistant_message.tool_calls[0].id, "name": assistant_message.tool_calls[0].function.name, "content": results})
+    pretty_print_conversation(messages)
+
+# Close the connection to the database    
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
