@@ -162,4 +162,4 @@ cython_debug/
 state_of_the_union.txt
 
 #data
-data/
+# data/
