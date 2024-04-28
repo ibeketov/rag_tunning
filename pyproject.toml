@@ -18,6 +18,7 @@ chromadb = "^0.4.22"
 pandas = "^2.1.4"
 matplotlib = "^3.8.2"
 bs4 = "^0.0.1"
+termcolor = "^2.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
