@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 
 state_of_the_union.txt
+
+#data
+data/
