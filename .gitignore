@@ -163,3 +163,4 @@ state_of_the_union.txt
 
 #data
 # data/
+*.bin
