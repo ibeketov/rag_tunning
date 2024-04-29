@@ -19,6 +19,10 @@ pandas = "^2.1.4"
 matplotlib = "^3.8.2"
 bs4 = "^0.0.1"
 termcolor = "^2.4.0"
+msal = "^1.28.0"
+pyjwt = "^2.8.0"
+sseclient = "^0.0.27"
+tempfileatexit = "^0.0.3"
 
 
 [tool.poetry.group.dev.dependencies]
