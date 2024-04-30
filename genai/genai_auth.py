@@ -32,7 +32,7 @@ _msal_auth = msal.PublicClientApplication(
         token_cache=cache
 )  
 
-token_meta = _msal_auth.acquire_token_interactive(scopes=[AZURE_SCOPE])
+token_meta = _msal_auth.acquire_token_silent(scopes=[AZURE_SCOPE])
 token = token_meta['access_token']
 
 decoded = jwt.decode(token, options={"verify_signature": False})
