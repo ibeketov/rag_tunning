@@ -16,6 +16,7 @@ cache = msal.SerializableTokenCache()
 AZURE_AUTHORITY = os.environ['AZURE_AUTHORITY']
 AZURE_CLIENT_ID = os.environ['AZURE_CLIENT_ID']
 AZURE_SCOPE = os.environ['AZURE_SCOPE']
+MYGEN_API = os.environ['MYGEN_API']
 
 
 if os.path.exists("my_cache.bin"):
@@ -32,7 +33,7 @@ _msal_auth = msal.PublicClientApplication(
         token_cache=cache
 )  
 
-token_meta = _msal_auth.acquire_token_silent(scopes=[AZURE_SCOPE])
+token_meta = _msal_auth.acquire_token_silent(scopes=[AZURE_SCOPE], account=None)
 token = token_meta['access_token']
 
 decoded = jwt.decode(token, options={"verify_signature": False})
@@ -64,7 +65,7 @@ json_data = {
     'stream': True,
     'regenerate': False,
 }
-prediction = session.post('https://chat.int.bayer.com/api/v1/chat/completions', headers=headers, json=json_data, stream=True) # 
+prediction = session.post(f'{MYGEN_API}/chat/completions', headers=headers, json=json_data, stream=True) # 
 
 # print(prediction.text)
 

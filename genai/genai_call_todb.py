@@ -16,7 +16,7 @@ GPT_MODEL = "gpt-35-turbo"
 _ = load_dotenv(find_dotenv()) # read local .env filHow many sone
 
 client = OpenAI()
-client.base_url = "https://chat.int.bayer.com/api/v1"
+client.base_url = os.environ['MYGEN_API']
 client.api_key  = os.environ['MYGEN_KEY']
 
 #coneect to the database
