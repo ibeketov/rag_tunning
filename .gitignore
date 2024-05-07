@@ -164,3 +164,6 @@ state_of_the_union.txt
 #data
 # data/
 *.bin
+genai/token.json
+genai/coll.env
+.DS_Store
