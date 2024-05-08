@@ -51,10 +51,11 @@ def run_conversation():
         model="gpt-3.5-turbo-0125",
         messages=messages,
         tools=tools,
-        tool_choice="auto",  # auto is default, but we'll be explicit
+        tool_choice="get_current_weather",  # auto is default, but we'll be explicit
     )
     response_message = response.choices[0].message
-    print(response_message)
+    print(json.dumps(json.loads(response.choices[0].message.model_dump_json()), indent=4))
+    
     tool_calls = response_message.tool_calls
  
     # Step 2: check if the model wanted to call a function
@@ -90,7 +91,8 @@ def run_conversation():
     
     
 def main():
-    print(run_conversation())
+    print(json.dumps(json.loads(run_conversation().model_dump_json()), indent=4))
+    # print(run_conversation())
 
 if __name__ == "__main__":
     main()
