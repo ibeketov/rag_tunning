@@ -51,7 +51,7 @@ def run_conversation():
         model="gpt-3.5-turbo-0125",
         messages=messages,
         tools=tools,
-        tool_choice="get_current_weather",  # auto is default, but we'll be explicit
+        tool_choice="auto",  # auto is default, but we'll be explicit
     )
     response_message = response.choices[0].message
     print(json.dumps(json.loads(response.choices[0].message.model_dump_json()), indent=4))
