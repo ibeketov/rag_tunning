@@ -30,6 +30,7 @@ query_engine = index.as_query_engine()
 response = query_engine.query(
     "Who is owner of HR data domain?"
 )
+
 print(response)
 
 # # Define the agent
