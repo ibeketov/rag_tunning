@@ -31,6 +31,9 @@ yfinance = "^0.2.40"
 llama-index = "^0.10.48.post1"
 llama-index-llms-openai = "^0.1.22"
 llama-index-readers-json = "^0.1.5"
+llama-index-llms-anthropic = "^0.1.14"
+llama-index-vector-stores-chroma = "^0.1.9"
+aiostream = "^0.6.1"
 
 
 [tool.poetry.group.dev.dependencies]

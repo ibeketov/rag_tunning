@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv, find_dotenv
-# import json
+import json
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 from termcolor import colored  
 
@@ -8,6 +8,7 @@ from llama_index.core.agent import ReActAgent
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import FunctionTool, QueryEngineTool
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings, Document
+from llama_index.llms.anthropic import Anthropic
 #  module to read JSON files
 from llama_index.readers.json import JSONReader
 
@@ -18,16 +19,28 @@ Settings.llm = OpenAI(model="gpt-3.5-turbo", temperature=0)
 Settings.llm.api_base = os.environ['MYGEN_API']
 Settings.llm.api_key  = os.environ['MYGEN_KEY']
 
-documents = JSONReader.load_data(input_file = "./data/domains_info_new.json")
+documents = JSONReader(clean_json=True).load_data(input_file="./data/domains_info_new.json", extra_info={})
+
+
+
+with open("./data/domains_info_new.json") as json_file:
+    data = json.load(json_file)
+    documents = [Document(text=json.dumps(t), metadata = {"url":t.get("domainURL")}) for t in data["Human Resources (Family)"]]
 
 # documents = SimpleDirectoryReader(input_files = ["./data/bayer-annual-report-2023.pdf"]).load_data()
-print(documents.count)
+print(documents.__len__())
 
 index = VectorStoreIndex.from_documents(documents=documents, show_progress=True)
 
-query_engine = index.as_query_engine()
+print(index.ref_doc_info)
 
-response = query_engine.query(
+chat_engine = index.as_chat_engine(chat_mode="best", llm=Settings.llm, verbose=True)
+
+# response = query_engine.query(
+#     "Who is owner of HR data domain?"
+# )
+
+response = chat_engine.chat(
     "Who is owner of HR data domain?"
 )
 
